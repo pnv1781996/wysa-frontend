@@ -1,0 +1,9 @@
+@import "../../style/variable.scss";
+.submit-arrowBtn {
+  height: 40px;
+  width: 40px;
+  border-radius: 100px;
+  background: $btn-bgcolor;
+  color: $field-bgcolor;
+  border: none;
+}

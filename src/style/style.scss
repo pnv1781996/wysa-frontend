@@ -1,0 +1,11 @@
+@import "../style/variable.scss";
+body {
+  background-color: $body-bgColor;
+  color: $font-color;
+  font-size: 16px;
+  line-height: 1.3erm;
+  .light-color {
+    color: $highlight-color;
+    font-weight: bold;
+  }
+}

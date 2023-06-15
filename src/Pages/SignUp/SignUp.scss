@@ -1,0 +1,38 @@
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 15px;
+
+  .center-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .signup-text,
+    .signup-form {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 90px;
+      flex: 1 1 50%;
+      position: relative;
+      .signup-heading {
+        font-size: 25px;
+      }
+      .signup-subheading {
+        font-size: 16px;
+        width: 350px;
+
+        @media (max-width: 380px) {
+          font-size: 14px;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

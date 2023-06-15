@@ -1,0 +1,54 @@
+@import "../../style/variable.scss";
+.modal {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .modal-content {
+    background-color: $field-bgcolor;
+    padding: 20px;
+    border-radius: 5px;
+    width: 350px;
+
+    .datetimepicker {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 0;
+
+      input {
+        outline: none;
+        border: 0;
+        background-color: transparent;
+
+        &[type="time"] {
+          font-size: 16px;
+        }
+      }
+    }
+
+    .modal-btns {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 20px;
+
+      .close-button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        background-color: $btn-bgcolor;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 10px;
+        color: $font-color;
+      }
+    }
+
+    @media (max-width: 380px) {
+      width: 250px;
+    }
+  }
+}
