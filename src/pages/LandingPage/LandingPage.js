@@ -1,17 +1,13 @@
-import React, { useContext, useEffect } from "react";
-import {
-  GetDataContext,
-  GetDataDispatchContext,
-} from "../../context/getDataContext";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { get } from "../../API/http-common";
 import ToastMsg from "../../components/ToastMsg/ToastMsg";
+import { useStore } from "../../App";
 
 function LandingPage() {
-  const { showError, errorMessage } = useContext(GetDataContext);
-  const { setSignUpData, setShowError, setRedirectToSignup, setErrorMessage } =
-    useContext(GetDataDispatchContext);
   const navigate = useNavigate();
+
+  const { message, isError, showToast } = useStore();
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -21,17 +17,16 @@ function LandingPage() {
         const result = await get("pages/nextPageRedirect", null, {
           signal: abortController.signal,
         });
-        setSignUpData(result.data.data);
-        setRedirectToSignup(result.data.screen);
-        navigate("/" + result.data.screen);
+
+        navigate("/" + result.data.screen, {
+          state: {
+            data: result.data.data,
+          },
+        });
       } catch (error) {
         // only call dispatch when we know the fetch was not aborted
         if (!abortController.signal.aborted) {
-          setErrorMessage(error.message);
-          setShowError(true);
-          setTimeout(() => {
-            setShowError(false);
-          }, 3000);
+          showToast(error.message, true);
         }
       }
     };
@@ -42,7 +37,11 @@ function LandingPage() {
   }, []);
 
   return (
-    <div> {showError && <ToastMsg message={errorMessage} type="error" />}</div>
+    <div>
+      {isError && message && (
+        <ToastMsg message={message} type={isError ? "error" : "success"} />
+      )}
+    </div>
   );
 }
 

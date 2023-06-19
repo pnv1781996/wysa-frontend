@@ -1,15 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Dashboard.scss";
-import { GetDataContext } from "../../context/getDataContext";
+import { useLocation } from "react-router-dom";
 function Dashboard() {
-  const { dashboardData } = useContext(GetDataContext);
+  const location = useLocation();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   useEffect(() => {
-    setTitle(dashboardData.title);
-    setDescription(dashboardData.description);
-  }, [dashboardData]);
+    setTitle(location.state.data.title);
+    setDescription(location.state.data.description);
+  }, [location.state]);
 
   return (
     <div className="main-dashboard-container">

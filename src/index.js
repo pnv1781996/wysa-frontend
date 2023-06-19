@@ -3,14 +3,11 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { GetDataProvider } from "./context/getDataContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <GetDataProvider>
-      <App />
-    </GetDataProvider>
+    <App />
   </React.StrictMode>
 );
 

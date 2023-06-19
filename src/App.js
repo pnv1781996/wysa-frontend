@@ -5,6 +5,19 @@ import Question from "./pages/Question/Question";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import LandingPage from "./pages/LandingPage/LandingPage";
 
+import { create } from "zustand";
+
+export const useStore = create((set) => ({
+  message: "",
+  isError: false,
+  showToast: (newMessage, isError = false) => {
+    set((state) => ({ message: newMessage, isError }));
+    setTimeout(() => {
+      set((state) => ({ message: "", isError: false }));
+    }, 3000);
+  },
+}));
+
 function App() {
   return (
     <>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { FaCheckCircle, FaChevronRight } from "react-icons/fa";
 import Button from "../Button/Button";
 import Modal from "../Modal/Modal";

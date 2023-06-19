@@ -1,26 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import QuestionCueCard from "../../components/QuestionCueCard/QuestionCueCard";
 import "./Question.scss";
-import {
-  GetDataContext,
-  GetDataDispatchContext,
-} from "../../context/getDataContext";
 import { get, post } from "../../API/http-common";
 import ToastMsg from "../../components/ToastMsg/ToastMsg";
+import { useStore } from "../../App";
 
 function Question() {
-  const { queAnsData, showError, errorMessage, showSuccess, successMessage } =
-    useContext(GetDataContext);
-
-  const {
-    setShowError,
-    setErrorMessage,
-    setShowSuccess,
-    setSuccessMessage,
-    setRedirectToSignup,
-    setDashboardData,
-  } = useContext(GetDataDispatchContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { message, isError, showToast } = useStore();
 
   // state declaration for question cue card 1
   const [activeCueCard, setActiveCueCard] = useState();
@@ -33,10 +22,6 @@ function Question() {
   const [que3Id, setQue3Id] = useState();
   const [totalHours, setTotalHours] = useState("");
   const [que4Id, setQue4Id] = useState();
-  const [activeDivRef, setActiveDivRef] = useState(useRef(null));
-
-  const location = useLocation();
-  const navigate = useNavigate();
 
   // get the path of current page
   const nextPage = location.pathname;
@@ -66,14 +51,14 @@ function Question() {
   const handleSubmitForm = async (id) => {
     switch (id) {
       case "question01":
-        const secondData = queAnsData.cuecard2;
+        const secondData = location.state.data.cuecard2;
         setActiveCueCard(secondData);
         setActiveCueCardId(secondData.questionId);
         setTime(secondData.option.name);
         setQue2Id(secondData.questionId);
         break;
       case "question02":
-        const thirdData = queAnsData.cuecard3;
+        const thirdData = location.state.data.cuecard3;
         setActiveCueCard(thirdData);
         setActiveCueCardId(thirdData.questionId);
         setWakeUpTime(thirdData.option.name);
@@ -81,7 +66,7 @@ function Question() {
 
         break;
       case "question03":
-        const fourthData = queAnsData.cuecard4;
+        const fourthData = location.state.data.cuecard4;
         setActiveCueCard(fourthData);
         setActiveCueCardId(fourthData.questionId);
         setTotalHours(fourthData.option.name);
@@ -111,18 +96,10 @@ function Question() {
 
         try {
           const result = await post("submit/assessment", assessmentData);
-          setSuccessMessage(result.data.message);
-          setShowSuccess(true);
-          setTimeout(() => {
-            setShowSuccess(false);
-          }, 3000);
+          showToast(result.data.message, false);
           redirectPage(nextPage);
         } catch (error) {
-          setErrorMessage(error.response.data.message);
-          setShowError(true);
-          setTimeout(() => {
-            setShowError(false);
-          }, 3000);
+          showToast(error.response.data.message, true);
         }
         break;
 
@@ -134,31 +111,28 @@ function Question() {
   // get the next page data of dashboard and redirect to the dashboard page
   const redirectPage = async (nextPage) => {
     let removeSlash = nextPage.replace("/", "");
-
     try {
       const result = await get("pages/nextPageRedirect", removeSlash);
-      setDashboardData(result.data.data);
-      setRedirectToSignup(result.data.screen);
-      navigate("/" + result.data.screen);
+      navigate("/" + result.data.screen, {
+        state: {
+          data: result.data.data,
+        },
+      });
     } catch (error) {
-      setErrorMessage(error.message);
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-      }, 3000);
+      showToast(error.message, true);
     }
   };
 
   // get the question page data from the api
   useEffect(() => {
-    const firstData = queAnsData.cuecard1;
+    const firstData = location.state.data.cuecard1;
     setActiveCueCard(firstData);
     setActiveCueCardId(firstData.questionId);
-  }, [queAnsData]);
+  }, [location.state]);
 
   return (
     <>
-      <div className="main-question-container" ref={activeDivRef}>
+      <div className="main-question-container">
         {activeCueCardId === "question01" && (
           <QuestionCueCard
             questionId={activeCueCardId}
@@ -199,8 +173,9 @@ function Question() {
             submitForm={() => handleSubmitForm(activeCueCardId)}
           />
         )}
-        {showError && <ToastMsg message={errorMessage} type="error" />}
-        {showSuccess && <ToastMsg message={successMessage} type="success" />}
+        {isError && message && (
+          <ToastMsg message={message} type={isError ? "error" : "success"} />
+        )}
       </div>
     </>
   );

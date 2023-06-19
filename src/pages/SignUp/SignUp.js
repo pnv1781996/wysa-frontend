@@ -1,31 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import RoundedTextField from "../../components/RoundedTextField/RoundedTextField";
 import "./SignUp.scss";
 import Button from "../../components/Button/Button";
 import ToastMsg from "../../components/ToastMsg/ToastMsg";
-import {
-  GetDataContext,
-  GetDataDispatchContext,
-} from "../../context/getDataContext";
 import { get, post } from "../../API/http-common";
+import { useStore } from "../../App";
 
 function SignUp() {
   // variable declarations
   const location = useLocation();
   const navigate = useNavigate();
-
-  const { signupData, showError, errorMessage, showSuccess, successMessage } =
-    useContext(GetDataContext);
-
-  const {
-    setShowError,
-    setErrorMessage,
-    setShowSuccess,
-    setSuccessMessage,
-    setRedirectToSignup,
-    setQueAnsData,
-  } = useContext(GetDataDispatchContext);
+  const { message, isError, showToast } = useStore();
 
   const [title, setTitle] = useState();
   const [description, setDescription] = useState();
@@ -51,18 +37,10 @@ function SignUp() {
     // call api for the stored the sign up data
     try {
       const result = await post("user/signup", signUpData);
-      setSuccessMessage(result.data.message);
-      setShowSuccess(true);
-      setTimeout(() => {
-        setShowSuccess(false);
-      }, 3000);
+      showToast(result.data.message, false);
       redirectPage(nextPage);
     } catch (error) {
-      setErrorMessage(error.response.data.message);
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-      }, 3000);
+      showToast(error.response.data.message, true);
     }
   };
 
@@ -72,23 +50,21 @@ function SignUp() {
 
     try {
       const result = await get("pages/nextPageRedirect", removeSlash);
-      setQueAnsData(result.data.data);
-      setRedirectToSignup(result.data.screen);
-      navigate("/" + result.data.screen);
+      navigate("/" + result.data.screen, {
+        state: {
+          data: result.data.data,
+        },
+      });
     } catch (error) {
-      setErrorMessage(error.message);
-      setShowError(true);
-      setTimeout(() => {
-        setShowError(false);
-      }, 3000);
+      showToast(error.message, true);
     }
   };
 
   // get the sign up data
   useEffect(() => {
-    setTitle(signupData.title);
-    setDescription(signupData.description);
-  }, [signupData]);
+    setTitle(location.state.data.title);
+    setDescription(location.state.data.description);
+  }, [location.state]);
 
   return (
     <div className="signup-container">
@@ -124,8 +100,9 @@ function SignUp() {
           ) : null}
         </div>
       </div>
-      {showError && <ToastMsg message={errorMessage} type="error" />}
-      {showSuccess && <ToastMsg message={successMessage} type="success" />}
+      {isError && message && (
+        <ToastMsg message={message} type={isError ? "error" : "success"} />
+      )}
     </div>
   );
 }

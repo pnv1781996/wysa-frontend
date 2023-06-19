@@ -4,6 +4,7 @@ import "./Button.scss";
 function Button({ positionButton, onClickBtn }) {
   return (
     <button
+      disabled={true}
       className="submit-arrowBtn"
       onClick={onClickBtn}
       style={{
