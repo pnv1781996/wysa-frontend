@@ -1,6 +1,6 @@
 import React from "react";
 import "./Modal.scss";
-function Modal({ onClose, totalTime, onDateTimeSelect, target }) {
+function Modal({ onClose, onDateTimeSelect, target, defaultValue }) {
   return (
     <div className="modal">
       <div className="modal-content">
@@ -8,7 +8,7 @@ function Modal({ onClose, totalTime, onDateTimeSelect, target }) {
           <input
             type="time"
             id="time"
-            value={target === "sleepTime" ? "00:00" : "07:00"}
+            value={target === "" ? defaultValue : target}
             onChange={onDateTimeSelect}
           />
         </div>

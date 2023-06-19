@@ -1,7 +1,7 @@
 .signup-container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
   align-items: center;
   height: 100vh;
   padding: 15px;
@@ -27,7 +27,7 @@
       .signup-subheading {
         font-size: 16px;
         width: 350px;
-
+        line-height: 2rem;
         @media (max-width: 380px) {
           font-size: 14px;
           width: 100%;

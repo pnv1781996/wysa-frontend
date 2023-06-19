@@ -1,11 +1,11 @@
 import React from "react";
 import "./RoundedTextField.scss";
-const RoundedTextField = ({ onChange }) => {
+const RoundedTextField = ({ onChange, placeHolder, type }) => {
   return (
     <input
-      type="text"
+      type={type}
       className="normal-textfield"
-      placeholder="Choose a nickname..."
+      placeholder={placeHolder}
       onChange={onChange}
     />
   );

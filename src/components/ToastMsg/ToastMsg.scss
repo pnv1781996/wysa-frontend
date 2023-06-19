@@ -1,0 +1,30 @@
+@import "../../style/variable.scss";
+.msg-container {
+  position: absolute;
+  top: 30px;
+  color: $font-color;
+  border-radius: 10px;
+  padding: 10px;
+  width: auto;
+
+  .msg {
+    display: flex; /* Set the parent container to flex */
+    align-items: center;
+    .msg-icon {
+      margin-right: 8px;
+
+      svg {
+        display: flex;
+      }
+    }
+  }
+  // @media (max-width: 380px) {
+  //   width: 80%;
+  // }
+}
+.success {
+  background-color: $success;
+}
+.error {
+  background-color: $error;
+}
