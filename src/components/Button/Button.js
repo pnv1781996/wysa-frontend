@@ -4,8 +4,8 @@ import "./Button.scss";
 function Button({ positionButton, onClickBtn }) {
   return (
     <button
-      disabled={true}
       className="submit-arrowBtn"
+      type="submit"
       onClick={onClickBtn}
       style={{
         position: positionButton === "absolute" ? "absolute" : null,

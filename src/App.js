@@ -18,6 +18,8 @@ export const useStore = create((set) => ({
   },
 }));
 
+export const token = localStorage.getItem("token");
+
 function App() {
   return (
     <>

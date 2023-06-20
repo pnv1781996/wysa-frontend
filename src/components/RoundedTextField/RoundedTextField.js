@@ -1,12 +1,13 @@
 import React from "react";
 import "./RoundedTextField.scss";
-const RoundedTextField = ({ onChange, placeHolder, type }) => {
+import { Field } from "formik";
+const RoundedTextField = ({ onChange, placeHolder, type, name }) => {
   return (
     <input
       type={type}
-      className="normal-textfield"
       placeholder={placeHolder}
       onChange={onChange}
+      className="normal-textfield"
     />
   );
 };

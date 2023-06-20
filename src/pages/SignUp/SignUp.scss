@@ -4,13 +4,14 @@
   justify-content: space-around;
   align-items: center;
   height: 100vh;
-  padding: 15px;
 
   .center-content {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    user-select: none;
+
     .signup-text,
     .signup-form {
       text-align: center;

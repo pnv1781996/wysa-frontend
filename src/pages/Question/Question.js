@@ -4,7 +4,7 @@ import QuestionCueCard from "../../components/QuestionCueCard/QuestionCueCard";
 import "./Question.scss";
 import { get, post } from "../../API/http-common";
 import ToastMsg from "../../components/ToastMsg/ToastMsg";
-import { useStore } from "../../App";
+import { token, useStore } from "../../App";
 
 function Question() {
   const location = useLocation();
@@ -95,7 +95,11 @@ function Question() {
         // call api for the stored the question page data
 
         try {
-          const result = await post("submit/assessment", assessmentData);
+          const result = await post("submit/assessment", assessmentData, {
+            headers: {
+              "x-access-token": token,
+            },
+          });
           showToast(result.data.message, false);
           redirectPage(nextPage);
         } catch (error) {
@@ -112,7 +116,11 @@ function Question() {
   const redirectPage = async (nextPage) => {
     let removeSlash = nextPage.replace("/", "");
     try {
-      const result = await get("pages/nextPageRedirect", removeSlash);
+      const result = await get("pages/nextPageRedirect", removeSlash, {
+        headers: {
+          "x-access-token": token,
+        },
+      });
       navigate("/" + result.data.screen, {
         state: {
           data: result.data.data,
