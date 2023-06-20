@@ -18,7 +18,12 @@ export const useStore = create((set) => ({
   },
 }));
 
-export const token = localStorage.getItem("token");
+export const useAuth = create((set) => ({
+  token: null,
+  setToken: (newToken) => {
+    set((state) => ({ token: newToken }));
+  },
+}));
 
 function App() {
   return (

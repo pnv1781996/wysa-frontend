@@ -5,38 +5,34 @@ import "./SignUp.scss";
 import Button from "../../components/Button/Button";
 import ToastMsg from "../../components/ToastMsg/ToastMsg";
 import { get, post } from "../../API/http-common";
-import { token, useStore } from "../../App";
-import * as Yup from "yup";
-import { Formik, Form, Field } from "formik";
+import { useAuth, useStore } from "../../App";
+import { z } from "zod";
 
-const SignupSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(3, { message: "Name should have at least 3 characters" })
-    .max(30, { message: "Name should have at most 30 characters" })
-    .matches(/^[ A-Za-z0-9_:@./#&+-]*$/, {
+const nameSchema = z
+  .string()
+  .min(3, { message: "Name should have at least 3 characters" })
+  .max(30, { message: "Name should have at most 30 characters" })
+  .regex(/^[ A-Za-z0-9_:@./#&+-]*$/, {
+    message:
+      "Name should have only some letters, numbers and special symbol like (_:@./#&+-)",
+  });
+const passwordSchema = z
+  .string()
+  .min(8, { message: "Password must be at least 8 characters long" })
+  .regex(
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).*$/,
+    {
       message:
-        "Name should have only some letters, numbers and special symbol like (_:@./#&+-)",
-    })
-    .required("Required"),
-  password: Yup.string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .matches(/[a-z]/, {
-      message: "Password must contain at least one lowercase letter",
-    })
-    .matches(/[A-Z]/, {
-      message: "Password must contain at least one uppercase letter",
-    })
-    .matches(/[0-9]/, { message: "Password must contain at least one digit" })
-    .matches(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/, {
-      message: "Password must contain at least one special character",
-    }),
-});
+        "Password must include at least one lowercase letter, one uppercase letter, one digit, and one special character",
+    }
+  );
 
 function SignUp() {
   // variable declarations
   const location = useLocation();
   const navigate = useNavigate();
   const { message, isError, showToast } = useStore();
+  const { token, setToken } = useAuth();
 
   const [title, setTitle] = useState();
   const [description, setDescription] = useState();
@@ -58,12 +54,10 @@ function SignUp() {
 
   // on click button stored the data
   const handleButtonClick = async () => {
-    debugger;
     const signUpData = { name: nickname, password: password };
-    // call api for the stored the sign up data
     try {
       const result = await post("user/signup", signUpData);
-      localStorage.setItem("token", result.data.token);
+      setToken(result.data.token);
       showToast(result.data.message, false);
       redirectPage(nextPage);
     } catch (error) {
@@ -73,7 +67,6 @@ function SignUp() {
 
   // get the next page data of question and redirect to the question page
   const redirectPage = async (nextPage) => {
-    debugger;
     let removeSlash = nextPage.replace("/", "");
     try {
       const result = await get("pages/nextPageRedirect", removeSlash, {
@@ -90,40 +83,34 @@ function SignUp() {
       showToast(error.message, true);
     }
   };
+
   // field validation
-  useEffect(() => {
-    let data = nickname;
-
-    if (data.length < 3) {
-      showToast("Name should have at least 3 characters", true);
-    } else if (data.length > 30) {
-      showToast("Name should have at most 30 characters", true);
-    } else if (!/^[ A-Za-z0-9_:@./#&+-]*$/.test(data)) {
-      showToast(
-        "Name should have only letters, numbers, and special symbols like (_:@./#&+-)",
-        true
-      );
-    } else if (/^\d+$/.test(data)) {
-      showToast("Name should not contain only numeric characters", true);
+  const validateNameData = async () => {
+    try {
+      await nameSchema.parse(nickname);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          showToast(err.message, true);
+        });
+      } else {
+        showToast(error, true);
+      }
     }
-  }, [nickname]);
-  useEffect(() => {
-    let data = password;
-
-    if (data.length < 8) {
-      showToast("Password must be at least 8 characters long", true);
-    } else if (!/[a-z]/.test(data)) {
-      showToast("Name should have at most 30 characters", true);
-    } else if (!/[A-Z]/.test(data)) {
-      showToast(
-        "Name should have only letters, numbers, and special symbols like (_:@./#&+-)",
-        true
-      );
-    } else if (!/[0-9]/.test(data)) {
-      showToast("Name should not contain only numeric characters", true);
+  };
+  const validatePasswordData = async () => {
+    try {
+      await passwordSchema.parse(password);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        error.errors.forEach((err) => {
+          showToast(err.message, true);
+        });
+      } else {
+        showToast(error, true);
+      }
     }
-  }, [password]);
-
+  };
   // get the sign up data
   useEffect(() => {
     setTitle(location.state.data.title);
@@ -151,13 +138,17 @@ function SignUp() {
           <RoundedTextField
             type={"text"}
             onChange={handleInputChange}
+            name={"name"}
             placeHolder={"Choose a nickname..."}
+            onBlur={validateNameData}
           />
 
           <RoundedTextField
             type={"password"}
             onChange={handlePasswordInputChange}
             placeHolder={"Enter password..."}
+            name={"password"}
+            onBlur={validatePasswordData}
           />
         </div>
         <div className="submit-btn">

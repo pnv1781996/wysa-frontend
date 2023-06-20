@@ -4,12 +4,13 @@ import QuestionCueCard from "../../components/QuestionCueCard/QuestionCueCard";
 import "./Question.scss";
 import { get, post } from "../../API/http-common";
 import ToastMsg from "../../components/ToastMsg/ToastMsg";
-import { token, useStore } from "../../App";
+import { useAuth, useStore } from "../../App";
 
 function Question() {
   const location = useLocation();
   const navigate = useNavigate();
   const { message, isError, showToast } = useStore();
+  const { token } = useAuth();
 
   // state declaration for question cue card 1
   const [activeCueCard, setActiveCueCard] = useState();
