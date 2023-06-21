@@ -26,7 +26,8 @@ function LandingPage() {
       } catch (error) {
         // only call dispatch when we know the fetch was not aborted
         if (!abortController.signal.aborted) {
-          showToast(error.message, true);
+          // showToast(error.message, true);
+          console.log(error.message);
         }
       }
     };

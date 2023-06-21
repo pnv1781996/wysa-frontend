@@ -59,11 +59,17 @@ function SignUp() {
       const result = await post("user/signup", signUpData);
       setToken(result.data.token);
       showToast(result.data.message, false);
-      redirectPage(nextPage);
     } catch (error) {
       showToast(error.response.data.message, true);
     }
   };
+
+  // when token is set in setToke after that call redirect page function
+  useEffect(() => {
+    if (token) {
+      redirectPage(nextPage);
+    }
+  }, [token]);
 
   // get the next page data of question and redirect to the question page
   const redirectPage = async (nextPage) => {
